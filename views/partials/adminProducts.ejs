@@ -1,0 +1,67 @@
+<!-- update index.js dom ui if you change ui here  -->
+<div  class="container-fluid mt-2">
+    <div id="parent" class="row mt-2 g-2">
+        <% for(let i=0;i<numProds;i++){ %>
+        <div id="<%=products[i].id %>" class="col-xs-12 col-md-3 mb-3 mb-sm-0 mh-25 shadow">
+        <div class="card">
+            <img src="<%= products[i].image %>" data-bs-toggle="modal" data-bs-target="#<%=products[i].id+"m" %>" class="card-img-top" height="250vh">
+            <div class="card-body">
+                <h5 class="card-title" id="<%= products[i].id+"n" %>"><%= products[i].name %> </h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li id="<%= products[i].id+"p" %>" class="list-group-item"><%= products[i].price %></li>
+                <li id="<%= products[i].id+"q" %>" class="list-group-item">Quantity: <b><%= products[i].qty %></b></li>
+            </ul>
+            <div class="card-footer d-flex justify-content-around">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<%= products[i].id+"m" %>">
+                Edit Details
+                </button>
+                <button onclick="deleteProduct(this,`<%=products[i].id %>`)" type="button" class="btn btn-danger" >
+                Delete Product
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="<%= products[i].id+"m"%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">     
+                <h1 class="modal-title fs-5" id="exampleModalLabel">EDIT <%= products[i].name %></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="col-12">
+                    <img src="<%= products[i].image %>" class="card-img-top" alt="...">
+                    </div>
+                    <form >
+                        <div class="col-12 mb-3">
+                            <label for="<%= products[i].id+"name" %>" class="col-form-label"> <%= products[i].name %></label>
+                            <input placeholder="enter new name" type="text" class="form-control" id="<%= products[i].id+"name" %>">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="<%= products[i].id+"price" %>" class="col-form-label"><%= products[i].price %></label>
+                            <input placeholder="enter new price" type="number" class="form-control" id="<%= products[i].id+"price" %>">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="<%= products[i].id+"details" %>" class="col-form-label"> Details</label>
+                            <textarea rows="5" cols="30" type="text" class="form-control" id="<%= products[i].id+"details" %>"> <%= products[i].details %></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="<%= products[i].id+"qty" %>" class="col-form-label"> Quantity:<%= products[i].qty %></label>
+                            <input placeholder="Update Quantity" type="number" class="form-control" id="<%= products[i].id+"qty" %>">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button class="btn btn-success" data-bs-dismiss="modal" onclick="update(`<%= products[i].id %>`)">SAVE</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <% }%>
+</div>
+</div>
