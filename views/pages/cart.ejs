@@ -17,6 +17,7 @@
     <%- include('../partials/header'); %>
     <%- include('../partials/errorDiv'); %>
     <%- include('../partials/cartProducts'); %>
+    <div class="offset-8 col-4 fs-2 " id="totalPrice">total price: <b class="text-success"><%= totalPrice %></b></div>
     <a class="btn btn-warning col-12"> PROCEED TO BUY </a>
   </body>
 </html>
@@ -27,6 +28,16 @@
     <script>
       function deleteItem(el,id){
         fetch(`/deleteItem/${id}`,{method:'DELETE'})
+        .then(res=>{
+          return res.json()
+        })
+        .then(data=>{
+          let totalPriceDiv = document.getElementById("totalPrice");
+          totalPriceDiv.innerHTML = 
+          `
+          total price: <b class="text-success">${data.totalPrice}</b>
+          `
+        })
         el.parentElement.parentElement.parentElement.remove();   //can use loop till class to remoce dependencey and deletehttps://stackoverflow.com/questions/47072364/how-to-get-nth-parent-element-in-pure-javascript-and-not-jquery
       }
 
@@ -34,7 +45,13 @@
         fetch(`/addItem/${id}`,{method:'POST'})   //can use loop till class to remoce dependencey and deletehttps://stackoverflow.com/questions/47072364/how-to-get-nth-parent-element-in-pure-javascript-and-not-jquery
         .then((res)=>res.json())
         .then((data)=>{
-          el.previousElementSibling.innerHTML = data.quantity}
+          el.previousElementSibling.innerHTML = data.quantity;
+          let totalPriceDiv = document.getElementById("totalPrice");
+          totalPriceDiv.innerHTML = 
+          `
+          total price:<b class="text-success">${data.totalPrice}</b>
+          `
+        }
         )
       }
 
@@ -42,12 +59,31 @@
         fetch(`/decItem/${id}`,{method:'POST'})   //can use loop till class to remoce dependencey and deletehttps://stackoverflow.com/questions/47072364/how-to-get-nth-parent-element-in-pure-javascript-and-not-jquery
         .then((res)=>res.json())
         .then((data)=>{
-          if(data.quantity ==0){
-            fetch(`/deleteItem/${id}`,{method:'DELETE'})
-            el.parentElement.parentElement.parentElement.parentElement.remove();
+            if(data.quantity ==0){
+              fetch(`/deleteItem/${id}`,{method:'DELETE'})
+              .then(res=>{
+            return res.json()
+            })
+            .then(data=>{
+              let totalPriceDiv = document.getElementById("totalPrice");
+              totalPriceDiv.innerHTML = 
+              `
+              total price: <b class="text-success">${data.totalPrice}</b>
+              `
+              el.parentElement.parentElement.parentElement.parentElement.remove();
+            })
+            .catch((error)=>{
+              console.log(error)
+            }
+            )
           }else{
-            el.previousElementSibling.previousElementSibling.innerHTML = data.quantity}
+            el.previousElementSibling.previousElementSibling.innerHTML = data.quantity
+            let totalPriceDiv = document.getElementById("totalPrice");
+            totalPriceDiv.innerHTML = 
+            `
+            total price:<b class="text-success">${data.totalPrice}</b>
+            `
           }
-        )
+        })
       }
     </script>

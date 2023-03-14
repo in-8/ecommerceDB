@@ -234,7 +234,7 @@ app.post('/addNewProduct', async (req,res)=>{
 			res.status(400).send({msg:err})
 		} else if (err) {
 		  // An unknown error occu
-		  res.status(400).send()
+			res.status(400).send()
 		}else{
 			// console.log(req.file)
 			// Everything went fine.
@@ -273,9 +273,10 @@ app.delete('/deleteItem/:id', async (req,res)=>{
 		if(cart.items[i].productId.id == id){
 			cart.totalPrice -= (cart.items[i].productId.price)*(cart.items[i].qty);
 			req.session.quantity -= cart.items[i].qty;
-			cart.items.pop(i);
+			let val = cart.items.splice(i,1);
 			await UserDB.findOneAndUpdate({email:userEmail},{cart:cart})
-			res.sendStatus(200)
+			res.status(200).send({totalPrice:cart.totalPrice.toFixed(2)})
+			break;
 		};
 	}
 })
@@ -286,6 +287,7 @@ app.post('/deleteProduct', async (req,res)=>{
 	await ProductDB.findByIdAndDelete(id)
 	res.sendStatus(200)
 })
+
 app.post('/addItem/:id', async (req,res)=>{
 	const {id} = req.params;
 	const userEmail = req.session.userEmail
@@ -297,14 +299,15 @@ app.post('/addItem/:id', async (req,res)=>{
 			req.session.quantity += 1;
 			cart.totalPrice+=cart.items[i].productId.price;
 			await UserDB.findOneAndUpdate({email:userEmail},{cart:cart})
-			res.send({ quantity:cart.items[i].qty})
+			res.send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2)});
+			break;
 		};
 	}
 })
 
 app.post('/decItem/:id', async (req,res)=>{
 	const {id} = req.params;
-	const userEmail = req.session.userEmail
+	const userEmail = req.session.userEmail;
 	let user = await UserDB.findOne({email:userEmail}).populate('cart.items.productId');
 	let cart = user.cart;
 	for(let i in cart.items){
@@ -313,7 +316,8 @@ app.post('/decItem/:id', async (req,res)=>{
 			req.session.quantity -= cart.items[i].qty;
 			cart.totalPrice-=cart.items[i].productId.price;
 			await UserDB.findOneAndUpdate({email:userEmail},{cart:cart})
-			res.send({ quantity:cart.items[i].qty})
+			res.status(200).send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2)})
+			break;
 		};
 	}
 })
@@ -328,9 +332,9 @@ app.route('/cart').get( async (req,res)=>{
 			let cartItems = user.cart.items;
 			let data = {name:req.session.firstName, session: true,isAdmin:true}
 			if(cartItems.length ===0 ){
-				res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:""});
+				res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",totalPrice:0});
 			}else{
-				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems});
+				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2)});
 			}
 		}else{
 			const userEmail = req.session.userEmail
@@ -340,7 +344,7 @@ app.route('/cart').get( async (req,res)=>{
 			if(cartItems.length ===0 ){
 				res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:""});
 			}else{
-				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems});
+				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2)});
 			}
 		}
 	}

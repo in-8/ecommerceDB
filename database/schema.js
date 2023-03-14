@@ -26,7 +26,12 @@ const userSchema = new Schema({
 		type: Number
 	},
 	isAdmin:{
-		type:Boolean
+		type:Boolean,
+		default:false
+	},
+	isSeller:{
+		type:Boolean,
+		default:false
 	},
 	cart:{
 		items: [{
@@ -38,9 +43,12 @@ const userSchema = new Schema({
             qty: {
                 type: Number,
                 required: true
-            }
+            },
         }],
-        totalPrice: Number
+        totalPrice: {
+		type: Number,
+		default:0
+		}
 	}
 })
 
@@ -61,7 +69,16 @@ const productSchema = new Schema({
     },
     details:{
         type:String
-    }
+    },
+	// isAvailable:{
+	// 	type:Boolean,
+	// 	default:function() {
+	// 		if (this.qty>0) {
+	// 			return true;
+	// 		}
+	// 		return false;
+	// 	}
+	// }
 })
 
 
