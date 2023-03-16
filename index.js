@@ -273,7 +273,7 @@ app.delete('/deleteItem/:id', async (req,res)=>{
 		if(cart.items[i].productId.id == id){
 			cart.totalPrice -= (cart.items[i].productId.price)*(cart.items[i].qty);
 			req.session.quantity -= cart.items[i].qty;
-			let val = cart.items.splice(i,1);
+			cart.items.splice(i,1);
 			await UserDB.findOneAndUpdate({email:userEmail},{cart:cart})
 			res.status(200).send({totalPrice:cart.totalPrice.toFixed(2)})
 			break;
@@ -284,7 +284,16 @@ app.delete('/deleteItem/:id', async (req,res)=>{
 //deletes item/prodcut from database
 app.post('/deleteProduct', async (req,res)=>{
 	const {id} = req.query;
-	await ProductDB.findByIdAndDelete(id)
+	let product = await ProductDB.findByIdAndDelete(id);
+	await UserDB.updateMany({},{
+		cart:{
+			$pull:{													//deletes item from array
+				items:{
+				productId:product._id
+				}
+			}
+		}
+	})
 	res.sendStatus(200)
 })
 
@@ -299,7 +308,7 @@ app.post('/addItem/:id', async (req,res)=>{
 			req.session.quantity += 1;
 			cart.totalPrice+=cart.items[i].productId.price;
 			await UserDB.findOneAndUpdate({email:userEmail},{cart:cart})
-			res.send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2)});
+			res.send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2),price:cart.items[i].productId.price});
 			break;
 		};
 	}
@@ -316,7 +325,7 @@ app.post('/decItem/:id', async (req,res)=>{
 			req.session.quantity -= cart.items[i].qty;
 			cart.totalPrice-=cart.items[i].productId.price;
 			await UserDB.findOneAndUpdate({email:userEmail},{cart:cart})
-			res.status(200).send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2)})
+			res.status(200).send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2),price:cart.items[i].productId.price})
 			break;
 		};
 	}
@@ -328,25 +337,120 @@ app.route('/cart').get( async (req,res)=>{
 	}else{
 		if(req.session.isAdmin){
 			const userEmail = req.session.userEmail
-			let user = await UserDB.findOne({email:userEmail}).populate('cart.items.productId');
+			let user = await UserDB.findOne({email:userEmail}).populate('cart.items.productId').populate('saveForLater.productId')
 			let cartItems = user.cart.items;
+			let savedForLater = user.saveForLater;
 			let data = {name:req.session.firstName, session: true,isAdmin:true}
 			if(cartItems.length ===0 ){
-				res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",totalPrice:0});
+				res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",totalPrice:0,savedForLater:savedForLater});
 			}else{
-				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2)});
+				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
 			}
 		}else{
 			const userEmail = req.session.userEmail
-			let user = await UserDB.findOne({email:userEmail}).populate('cart.items.productId');
+			let user = await UserDB.findOne({email:userEmail}).populate('cart.items.productId').populate('saveForLater.productId');
 			let cartItems = user.cart.items;
+			let savedForLater = user.saveForLater;
 			let data = {name:req.session.firstName, session: true,isAdmin:false}
 			if(cartItems.length ===0 ){
-				res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:""});
+				res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",savedForLater:savedForLater});
 			}else{
-				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2)});
+				res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
 			}
 		}
+	}
+})
+
+app.post('/saveForLater/:id', async (req,res)=>{
+	const {id} = req.params;
+	let userEmail = req.session.userEmail
+	let item;
+	let user = await UserDB.findOne({email:userEmail}).populate('cart.items.productId');
+	for(let i in user.cart.items){
+		if(user.cart.items[i].productId.id==id){
+			user.cart.totalPrice -= (user.cart.items[i].productId.price)*(user.cart.items[i].qty);
+			req.session.quantity -= user.cart.items[i].qty;
+			item = user.cart.items.splice(i,1)[0];
+			break;
+		}
+	}
+	// let product = await ProductDB.findById(id);   // is it faster to access database or extract from user info i am going with later one
+	user.saveForLater.push(
+		{
+			productId:item.productId._id
+		}
+	)
+	await user.save();
+	res.send({msg:"successfully saved for later",pid:id,item:item,totalPrice:user.cart.totalPrice})
+	
+})
+
+app.post('/addFromSaveLater/:id',async function (req, res) {
+		const {id} = req.params;
+		let userEmail = req.session.userEmail;
+		let item;
+		let user = await UserDB.findOne({ email: userEmail }).populate('saveForLater.productId');
+		for (let i in user.saveForLater) {
+			if (user.saveForLater[i].productId.id == id) {
+				item = user.saveForLater.splice(i, 1)[0];
+				user.cart.items.push({
+					productId: item.productId._id,
+					qty: 1
+				});
+				req.session.quantity += 1;
+				if (!user.cart.totalPrice) {
+					user.cart.totalPrice = 0;
+				}
+				user.cart.totalPrice += item.productId.price;
+				await user.save();
+				res.send({ msg: "successfully added to cart", pid: id, item: item });
+				break;
+			}
+		}
+
+	})
+
+app.get('/checkout',async (req,res)=>{
+	let userEmail = req.session.userEmail;
+	let user = await UserDB.findOne({email:userEmail}).populate('cart.items.productId');
+	let cartItems = user.cart.items;
+	result =[];
+	for(let i in user.cart.items){
+		let prodcut = await ProductDB.findById(user.cart.items[i].productId.id);
+		if(prodcut==null){
+			res.render('/pages/cart',{error:"product no longer available! delete item"})
+			return;
+		}else if(prodcut.qty<user.cart.items[i].qty){
+			prodcut.isAvailable = false;
+			await prodcut.save();
+			if(req.session.isAdmin){
+				let data = {name:req.session.firstName, session: true,isAdmin:true}
+				if(cartItems.length ===0 ){
+					res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",totalPrice:0,savedForLater:savedForLater});
+				}else{
+					res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
+				}
+				return ;
+			}else{
+				let data = {name:req.session.firstName, session: true,isAdmin:false}
+				if(cartItems.length ===0 ){
+					res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",savedForLater:savedForLater});
+				}else{
+					res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
+				}
+				return;
+			}	
+		}else{
+			result.push(user.cart.items[i])
+		}
+	}
+
+	if(req.session.isAdmin){
+			let data = {name:req.session.firstName, session: true,isAdmin:true}
+			res.render("pages/checkout",{data:data,error:"",quantity:"",products:result,totalPrice:user.cart.totalPrice.toFixed(2)});
+	}else{
+			let data = {name:req.session.firstName, session: true,isAdmin:false}
+			res.render("pages/checkout",{data:data,error:"",quantity:"",products:result,totalPrice:user.cart.totalPrice.toFixed(2)});
 	}
 })
 

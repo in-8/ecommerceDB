@@ -1,14 +1,14 @@
 <div class="container-fluid mt-2">
     <div class="row mt-2 g-2">
         <% for(let i in products){ %>
-        <div class="col-xs-12 col-sm-4 col-lg-3 mb-3 mb-sm-0 mh-25 shadow">
+        <div id="<%= products[i].productId._id+'parent'%>" class="col-xs-12 col-sm-4 col-lg-3 mb-3 mb-sm-0 mh-25 shadow">
           <div class="card">
                 <img src="<%= products[i].productId.image %>" class="card-img-top" height="250vh">
                 <div class="card-body">
                   <h5 class="card-title"><%= products[i].productId.name %> </h5>
                 </div>
                 <ul class="list-group list-group-flush ">
-                  <li class="list-group-item"><%= products[i].productId.price %></li>
+                  <li id="<%= products[i].productId.id+'totalPriceItem'%>" class="list-group-item">Price: <b class="text-primary fs-5"><%= products[i].productId.price %></b></li>
                   <li class="list-group-item d-flex justify-content-around align-content-center">
                     Quantity: <b><%= products[i].qty %></b> 
                     <i class="btn btn-success" style="--bs-btn-padding-y: 0; --bs-btn-padding-x:.5rem; --bs-btn-font-size: 1.75rem;" onclick="addItem(this,`<%=products[i].productId.id %>`)">+</i> 
@@ -19,6 +19,7 @@
                     View Details 
                   </button>
                   <button onclick="deleteItem(this,`<%= products[i].productId.id%>`)"  class="btn btn-danger">Delete Item</button>  <!--using relative relationship to delete items i.e parent-->
+                  <button class="btn btn-info text-white" onclick="saveForLater(this,`<%= products[i].productId.id%>`)"> save for later</button>
                 </div>
           </div>
         </div>

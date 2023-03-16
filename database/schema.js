@@ -49,7 +49,27 @@ const userSchema = new Schema({
 		type: Number,
 		default:0
 		}
-	}
+	},
+	saveForLater:[
+		{
+            productId: {
+                type: Schema.Types.ObjectId,
+                ref: 'ProductDB',
+                required: true
+            }
+        }
+	]
+	// [{
+	// 	productId: {
+	// 		type: Schema.Types.ObjectId,
+	// 		ref: 'ProductDB',
+	// 	}
+	// }]
+	// {	
+	// 	type:Map,
+	// 	of: Schema.Types.ObjectId,
+	// 	ref:'ProductDB'
+	// }
 })
 
 //products Schema
@@ -70,15 +90,19 @@ const productSchema = new Schema({
     details:{
         type:String
     },
-	// isAvailable:{
-	// 	type:Boolean,
-	// 	default:function() {
-	// 		if (this.qty>0) {
-	// 			return true;
-	// 		}
-	// 		return false;
-	// 	}
-	// }
+	isAvailable:{
+		type:Boolean,
+		default:function() {
+			if (this.qty>0) {
+				return true;
+			}
+			return false;
+		}
+	},
+	seller:{
+		type: Schema.Types.ObjectId,
+        ref: 'UserDB',
+	}
 })
 
 
