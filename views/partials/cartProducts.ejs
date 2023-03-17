@@ -8,7 +8,7 @@
                   <h5 class="card-title"><%= products[i].productId.name %> </h5>
                 </div>
                 <ul class="list-group list-group-flush ">
-                  <li id="<%= products[i].productId.id+'totalPriceItem'%>" class="list-group-item">Price: <b class="text-primary fs-5"><%= products[i].productId.price %></b></li>
+                  <li id="<%= products[i].productId.id+'totalPriceItem'%>" class="list-group-item">Price: <b class="text-primary fs-5"><%= products[i].productId.price * products[i].qty %></b></li>
                   <li class="list-group-item d-flex justify-content-around align-content-center">
                     Quantity: <b><%= products[i].qty %></b> 
                     <i class="btn btn-success" style="--bs-btn-padding-y: 0; --bs-btn-padding-x:.5rem; --bs-btn-font-size: 1.75rem;" onclick="addItem(this,`<%=products[i].productId.id %>`)">+</i> 

@@ -27,7 +27,7 @@ module.exports = function(email,token, callback){
             Subject: 'reset password link for lelo for lelo',
             TextPart: 'click on the link below to reset your Lelo account password',
             HTMLPart:
-                `<h3> <a href="http://localhost:3000/resetPassword/${token}/${email}">click here</a></h3>`,
+                `<h3> <a href="http://localhost:3000/login/resetPassword/${token}/${email}">click here</a></h3>`,
             },
         ],
         })

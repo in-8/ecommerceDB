@@ -27,7 +27,7 @@ module.exports = function(email,token, callback){
             Subject: 'email verifiaction for lelo',
             TextPart: 'thankyou for joining lelo family! click on the link below to get verified.',
             HTMLPart:
-                `<h3> hi click on this link to get verified!</h3> <a href="http://localhost:3000/verifyMail/${token}/${email}">verify here</a>`,  
+                `<h3> hi click on this link to get verified!</h3> <a href="http://localhost:3000/login/verifyMail/${token}/${email}">verify here</a>`,  
             },
         ],
         })

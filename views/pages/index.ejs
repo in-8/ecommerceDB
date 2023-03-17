@@ -25,7 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
     <script>
       function addToCart(el,id){
-        fetch(`/addToCart?id=${id}`,{method:'POST'})   //can use loop till class to remoce dependencey and deletehttps://stackoverflow.com/questions/47072364/how-to-get-nth-parent-element-in-pure-javascript-and-not-jquery
+        fetch(`/addToCart?id=${id}`,{method:'POST',headers: {"type": "fetch"}})   //can use loop till class to remoce dependencey and deletehttps://stackoverflow.com/questions/47072364/how-to-get-nth-parent-element-in-pure-javascript-and-not-jquery
         .then((res)=>{
           if(!res.redirected){
             el.innerHTML = "Added item to cart ";
@@ -33,6 +33,10 @@
           }else{
             window.location.href = res.url;
             // document.getElementById("err").innerHTML = "login"
+            // if(res.status==304){
+            // window.location.href = '/login'
+            // return Promise.reject();
+          // }
         }
         }
         ).then(data=>{
@@ -45,7 +49,6 @@
       }
       
       sessionStorage.setItem("loadNext","4");
-      
       function loadMoreProd(){
         let loadNext = sessionStorage.getItem("loadNext")
         fetch(`/loadMoreProd/${loadNext}`)
@@ -56,7 +59,7 @@
           data.result.forEach(function(obj){
             displayLoadedProduct(obj)
           })
-          sessionStorage.setItem("loadNext",data.next4Products)
+          sessionStorage.setItem("loadNext",data.nextProductCount)
         })
       }
       function displayLoadedProduct(obj){
