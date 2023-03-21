@@ -4,6 +4,7 @@ require("../services/getUser")
 const {findViaEmailAndUpdateCart} = require("../services/updateUser")
 const {updateProductisAvailable} = require("../services/updateProduct");
 const { getProductById } = require("../services/getProduct");
+
 const increaseQuantityCart =  async (req,res)=>{
 	const {id} = req.params;
 	let user = await getUserViaEmailAndPopulateCart(req.session.userEmail)
@@ -104,7 +105,6 @@ const postAddFromSaveLater = async function (req, res) {
     let userEmail = req.session.userEmail;
     let item;
     let user = await getUserViaEmailAndPopulateSaveLater(userEmail);
-	console.log(user.saveForLater);
     for (let i in user.saveForLater) {
         if (user.saveForLater[i].productId.id == id) {
             item = user.saveForLater.splice(i, 1)[0];
@@ -126,8 +126,9 @@ const getCheckout = async (req,res)=>{
 	let user = await getUserViaEmailAndPopulateCart(userEmail);
 	let cartItems = user.cart.items;
 	if(cartItems.length ===0 ){
-		res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{}});
-	}
+		res.redirect('/cart')
+		return;
+		}
 	result =[];
 	for(let i in user.cart.items){
 		let product = await getProductById(user.cart.items[i].productId.id);
@@ -142,7 +143,7 @@ const getCheckout = async (req,res)=>{
 				return ;
 			}else{
 				let data = {name:req.session.firstName, session: true,isAdmin:false}
-					res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
+					res.render("pages/cart",{data:data,error:"",quantity:0,products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
 				return;
 			}	
 		}else{
