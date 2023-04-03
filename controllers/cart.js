@@ -1,162 +1,126 @@
-const{UserDB,ProductDB} = require("../database/schema");
-const {getUserViaEmailAndPopulateCart,getUserViaEmailAndPopulateCartAndSaveLater,getUserViaEmailAndPopulateSaveLater} = 
-require("../services/getUser")
-const {findViaEmailAndUpdateCart} = require("../services/updateUser")
-const {updateProductisAvailable} = require("../services/updateProduct");
-const { getProductById } = require("../services/getProduct");
+// const{UserDB,ProductDB} = require("../database/schema");
+// const {getUserViaEmailAndPopulateCart,getUserViaEmailAndPopulateCartAndSaveLater,getUserViaEmailAndPopulateSaveLater} = 
+// require("../services/getUser")
+// const {findViaEmailAndUpdateCart} = require("../services/updateUser")
+// const {updateProductisAvailable} = require("../services/updateProduct");
+// const { getProductById } = require("../services/getProduct");
+
+//sql services
+const {getCartProducts,getSaveForLater,checkProductInSaveForLater,checkProductInCartItems, getTotals} = require('../services/sqlServices/cart/getCart');
+const {deleteItemFromCartItems,deleteFromSaveLater} = require('../services/sqlServices/cart/deleteCart');
+const {saveForLater,saveCart,postIncreaseQuantityCart,postDecreaseQuantityCart} = require('../services/sqlServices/cart/postCart');
+const {updateTotals,updateQuantity,updatetotalPriceAndQty} = require('../services/sqlServices/cart/updateCart');
+const {updateIsAvailProduct} = require('../services/sqlServices/product/updateProduct');
+const{getAddress}= require('../services/sqlServices/orders/getAddress');
+const { getProductById } = require('../services/sqlServices/product/getProduct');
+
+
+
 
 const increaseQuantityCart =  async (req,res)=>{
 	const {id} = req.params;
-	let user = await getUserViaEmailAndPopulateCart(req.session.userEmail)
-	let cart = user.cart;
-	for(let i in cart.items){
-		if(cart.items[i].productId.id == id){
-			cart.items[i].qty +=1;
-			req.session.quantity += 1;
-			cart.totalPrice+=cart.items[i].productId.price;
-			await findViaEmailAndUpdateCart(req.session.userEmail,cart)
-			res.send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2),price:cart.items[i].productId.price});
-			break;
-		};
-	}
+	let result = await postIncreaseQuantityCart(req.session.cartID,id)
+	req.session.totalPrice = result.total.totalPrice
+	req.session.quantity = result.total.quantity
+	res.send({ quantity:result.qty,totalPrice:result.total.totalPrice,price:result.price});
 }
 
 const decreaseQuantityCart = async (req,res)=>{
 	const {id} = req.params;
-	let user = await getUserViaEmailAndPopulateCart(req.session.userEmail);
-	let cart = user.cart;
-	for(let i in cart.items){
-		if(cart.items[i].productId.id == id){
-			cart.items[i].qty -=1;
-			req.session.quantity -= cart.items[i].qty;
-			cart.totalPrice-=cart.items[i].productId.price;
-			await findViaEmailAndUpdateCart(req.session.userEmail,cart)
-			res.status(200).send({ quantity:cart.items[i].qty,totalPrice:cart.totalPrice.toFixed(2),price:cart.items[i].productId.price})
-			break;
-		};
-	}
+	let result = await postDecreaseQuantityCart(req.session.cartID,id)
+	req.session.totalPrice = result.total.totalPrice
+	req.session.quantity = result.total.quantity
+	res.send({ quantity:result.qty,totalPrice:result.total.totalPrice,price:result.price});
+	
 }
 
 //deletes item from users cart
 const deleteItemCart = async (req,res)=>{
-	const {id} = req.params;
-	let user = await getUserViaEmailAndPopulateCart(req.session.userEmail);
-	let cart = user.cart;
-	for(let i in cart.items){
-		if(cart.items[i].productId.id == id){
-			cart.totalPrice -= (cart.items[i].productId.price)*(cart.items[i].qty);
-			req.session.quantity -= cart.items[i].qty;
-			cart.items.splice(i,1);
-			await findViaEmailAndUpdateCart(req.session.userEmail,cart)
-			res.status(200).send({totalPrice:cart.totalPrice.toFixed(2)})
-			break;
-		};
-	}
+	const {id} = req.params
+	const cartID = req.session.cartID
+	const result = await deleteItemFromCartItems(cartID,id,req.session.UserID)
+	req.session.quantity = result.totalQuantity
+	req.session.totalPrice = result.totalPrice
+	res.status(200).send({totalPrice:result.totalPrice})
 }
 
 const getCart = async (req,res)=>{
-	const userEmail = req.session.userEmail
-	let user =  await getUserViaEmailAndPopulateCartAndSaveLater(userEmail)
-	let cartItems = user.cart.items;
-	let savedForLater = user.saveForLater;
-	if(req.session.isAdmin){
-		let data = {name:req.session.firstName, session: true,isAdmin:true}
-		if(cartItems.length ===0 ){
-			res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",totalPrice:0,savedForLater:savedForLater});
-		}else{
-			res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
-		}
+	const userID = req.session.UserID;
+	let cartItems = await getCartProducts(req.session.cartID)
+	let totals = await updateTotals(userID,req.session.cartID)
+	req.session.quantity = totals.recordset[0].totalQuantity;
+	let savedForLaterRes = await getSaveForLater(userID);
+	let savedForLater = savedForLaterRes.recordset
+	let data = {name:req.session.firstName, session: true,isAdmin:req.session.isAdmin,role:req.session.role}
+	if(cartItems.recordset.length ===0 ){
+		res.render("pages/cart",{data: data,error:"CART IS EMPTY! BUY PRODUCTS 😄 ",products:{},quantity:0,totalPrice:0,savedForLater:savedForLater});
 	}else{
-
-		let data = {name:req.session.firstName, session: true,isAdmin:false}
-		if(cartItems.length ===0 ){
-			res.render("pages/cart",{data: data,error:"CART IS EMPTY! ADD PRODUCTS TO BUY!",products:{},quantity:"",totalPrice:0,savedForLater:savedForLater});
-		}else{
-			res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
-		}
+		res.render("pages/cart",{data:data,error:"",quantity:totals.recordset[0].totalQuantity,products:cartItems.recordset,totalPrice:totals.recordset[0].totalPrice,savedForLater:savedForLater});
 	}
 	}
 //didnt handle case for deletion of product in saveforlater if deleted by admin
+//think if session quantity and total price needed
 const postSaveForLater =  async (req,res)=>{
 	const {id} = req.params;
-	let userEmail = req.session.userEmail
-	let item;
-	let user = await getUserViaEmailAndPopulateCart(userEmail);
-	for(let i in user.cart.items){
-		if(user.cart.items[i].productId.id==id){
-			user.cart.totalPrice -= (user.cart.items[i].productId.price)*(user.cart.items[i].qty);
-			req.session.quantity -= user.cart.items[i].qty;
-			item = user.cart.items.splice(i,1)[0];
-			break;
-		}
+	let userID = req.session.UserID;
+	let savedForLater = await checkProductInSaveForLater(userID,id)
+	if(savedForLater.recordset.length==0){
+		let result = await saveForLater(userID,id,req.session.cartID);
+		req.session.totalPrice = result.totalPrice;
+		req.session.quantity = result.totalQuantity
+		res.send({msg:"successfully saved for later",pid:id,item:result.product,totalPrice:result.totalPrice})
+	}else{
+		res.send({result:"error", msg:"item already in saved for later"})
 	}
-	user.saveForLater.push(
-		{
-			productId:item.productId._id
-		}
-	)
-	await user.save();
-	res.send({msg:"successfully saved for later",pid:id,item:item,totalPrice:user.cart.totalPrice})
 	
 }
 
 const postAddFromSaveLater = async function (req, res) {
     const {id} = req.params;
-    let userEmail = req.session.userEmail;
-    let item;
-    let user = await getUserViaEmailAndPopulateSaveLater(userEmail);
-    for (let i in user.saveForLater) {
-        if (user.saveForLater[i].productId.id == id) {
-            item = user.saveForLater.splice(i, 1)[0];
-            user.cart.items.push({
-                productId: item.productId._id,
-                qty: 1
-            });
-            req.session.quantity += 1;
-            user.cart.totalPrice += item.productId.price;
-            await user.save();
-            res.send({ msg: "successfully added to cart", pid: id, item: item });
-            break;
-        }
-    }
+    let userID = req.session.UserID
+	let userCartID = req.session.cartID
+	let cartProduct = await checkProductInCartItems(userCartID,id)
+	//if product already in cart just delete from savefor later else add to cart and then delete
+	if(cartProduct.recordset.length ==0){
+		await saveCart(userCartID,id)
+		req.session.quantity +=1;
+		res.status(200).send()
+	}
+	await deleteFromSaveLater(userID,id)
+	res.status(200).send()
 }
 
 const getCheckout = async (req,res)=>{
-	let userEmail = req.session.userEmail;
-	let user = await getUserViaEmailAndPopulateCart(userEmail);
-	let cartItems = user.cart.items;
+	let cartID = req.session.cartID
+	let cartItems= await getCartProducts(cartID)
+	cartItems = cartItems.recordset
 	if(cartItems.length ===0 ){
 		res.redirect('/cart')
-		return;
+		return
 		}
-	result =[];
-	for(let i in user.cart.items){
-		let product = await getProductById(user.cart.items[i].productId.id);
-		if([product]==null){
-			res.render('/pages/cart',{error:"product no longer available! delete item"})
-			return;
-		}else if(product.qty<user.cart.items[i].qty){
-			updateProductisAvailable(product)
-			if(req.session.isAdmin){
-				let data = {name:req.session.firstName, session: true,isAdmin:true}
-					res.render("pages/cart",{data:data,error:"",quantity:"",products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
-				return ;
-			}else{
-				let data = {name:req.session.firstName, session: true,isAdmin:false}
-					res.render("pages/cart",{data:data,error:"",quantity:0,products:cartItems,totalPrice:user.cart.totalPrice.toFixed(2),savedForLater:savedForLater});
-				return;
-			}	
+	let result =[];
+	let totalPrice=0;
+	let totalQuantity=0;
+	//another check for stock
+	for(let i in cartItems){
+		if(cartItems[i].quantity<=0){
+			await updateIsAvailProduct(cartItems[i].id)
+			await deleteItemFromCartItems(cartID,cartItems[i].id,req.session.UserID)
+		}else if(cartItems[i].qty>cartItems[i].quantity){
+			cartItems[i].qty=cartItems[i].quantity
+			await updateQuantity(cartID,cartItems[i].id,cartItems[i].quantity)
+			totalPrice+=cartItems[i].qty*cartItems[i].price
+			result.push(cartItems[i])
 		}else{
-			result.push(user.cart.items[i])
+			totalPrice+=cartItems[i].qty*cartItems[i].price
+			result.push(cartItems[i])
 		}
 	}
-	if(req.session.isAdmin){
-			let data = {name:req.session.firstName, session: true,isAdmin:true}
-			res.render("pages/checkout",{data:data,error:"",quantity:"",products:result,totalPrice:user.cart.totalPrice.toFixed(2)});
-	}else{
-			let data = {name:req.session.firstName, session: true,isAdmin:false}
-			res.render("pages/checkout",{data:data,error:"",quantity:"",products:result,totalPrice:user.cart.totalPrice.toFixed(2)});
-	}
+	//get users address
+	let address = await  getAddress(req.session.UserID)
+	await updatetotalPriceAndQty(cartID,totalPrice,totalQuantity)
+	let data = {name:req.session.firstName, session: true,isAdmin:req.session.isAdmin,role:req.session.role}
+	res.render("pages/checkout",{data:data,error:"",quantity:"",products:result,totalPrice:totalPrice,address:address.recordset});
 }
 
 module.exports = {

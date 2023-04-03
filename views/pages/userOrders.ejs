@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <!-- font awsome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>LELO</title>
+  </head>
+  <body class="container-fluid pt-5 mt-5" style="background-color: #576CBC;">
+    <%- include('../partials/header'); %>
+    <!-- successDiv -->
+    <div id="successDiv" class="col-12 bg-success text-white mt-4 mb-2 d-none " onclick="hideSuccess(this)">
+      <p  class="text-center fs-4"></p>
+    </div>
+    <%- include('../partials/errorDiv'); %>
+    <div class="row p-3 p-sm-5">
+      <% for(let i in result){ %>
+      <div class=" card mb-3 offset-sm-2 col-12 col-sm-8">
+        <div class="row g-0">
+          <div class="d-flex justify-content-center col-sm-4">
+            <img src="<%= result[i].image%>" height="180rem" width="180rem" class="img-fluid rounded-start align-self-center " >
+          </div>
+          <div class="col-sm-8 justify-content-center">
+            <div class="row card-body offset-sm-2 offset-1">
+              <p class="card-title fs-4">Name:<%= result[i].name%></p>
+              <p class="card-text text-success-emphasis fs-4">Price:<%= result[i].price%></p>
+              <p class="card-text fs-4"> Paymode:<%= result[i].payMode%></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }%>
+    </div>
+  </body>
+</html>
+
+<!-- Optional JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script>
+              
+    </script>
+
+

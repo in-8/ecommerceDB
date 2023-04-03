@@ -1,46 +1,53 @@
 <div class="container-fluid mt-2">
-    <div class="row mt-2 g-2">
+    <div class="row mt-2 g-3">
         <% for(let i in products){ %>
-        <div id="<%= products[i].productId._id+'parent'%>" class="col-xs-12 col-sm-4 col-lg-3 mb-3 mb-sm-0 mh-25 shadow">
-          <div class="card">
-                <img src="<%= products[i].productId.image %>" class="card-img-top" height="250vh">
+        <div id="<%= products[i].id+'parent'%>" class="col-xs-12 col-sm-4 col-lg-3 mb-3 mb-sm-0 mh-25 shadow">
+          <div class="card pt-3">
+                <img src="<%= products[i].image %>" class="card-img-top" height="250vh" width="250vh">
                 <div class="card-body">
-                  <h5 class="card-title"><%= products[i].productId.name %> </h5>
+                  <h5 class="card-title"><%= products[i].name %> </h5>
                 </div>
                 <ul class="list-group list-group-flush ">
-                  <li id="<%= products[i].productId.id+'totalPriceItem'%>" class="list-group-item">Price: <b class="text-primary fs-5"><%= products[i].productId.price * products[i].qty %></b></li>
+                  <li id="<%= products[i].id+'totalPriceItem'%>" class="list-group-item">Price: <b class="text-primary fs-5"><%= products[i].price * products[i].qty %></b></li>
+                <% if(products[i].isavailable){%>
                   <li class="list-group-item d-flex justify-content-around align-content-center">
-                    Quantity: <b><%= products[i].qty %></b> 
-                    <i class="btn btn-success" style="--bs-btn-padding-y: 0; --bs-btn-padding-x:.5rem; --bs-btn-font-size: 1.75rem;" onclick="addItem(this,`<%=products[i].productId.id %>`)">+</i> 
-                    <i class="btn btn-danger" style="--bs-btn-padding-y: 0; --bs-btn-padding-x:.75rem; --bs-btn-font-size: 1.75rem;" onclick="decItem(this, `<%=products[i].productId.id %>`)">-</i> </li>
+                    Quantity: <b id="<%= products[i].id+'qty'%>"><%= products[i].qty %></b> 
+                    <i class="btn btn-success" style="--bs-btn-padding-y: 0; --bs-btn-padding-x:.5rem; --bs-btn-font-size: 1.75rem;" onclick="addItem(this,`<%=products[i].id %>`,`<%=products[i].quantity %>`)">+</i> 
+                    <i class="btn btn-danger" style="--bs-btn-padding-y: 0; --bs-btn-padding-x:.75rem; --bs-btn-font-size: 1.75rem;" onclick="decItem(this, `<%=products[i].id %>`)">-</i> 
+                  </li>
+                <% }else{%>  
+                  <li class="list-group-item d-flex justify-content-around align-content-center bg-danger">
+                    product out of stock
+                  </li>
+                <% }%>         
                 </ul>
                 <div class="card-body d-flex justify-content-around">
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<%=i %>">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<%=i+'modal' %>">
                     View Details 
                   </button>
-                  <button onclick="deleteItem(this,`<%= products[i].productId.id%>`)"  class="btn btn-danger">Delete Item</button>  <!--using relative relationship to delete items i.e parent-->
-                  <button class="btn btn-info text-white" onclick="saveForLater(this,`<%= products[i].productId.id%>`)"> save for later</button>
+                  <button onclick="deleteItem(this,`<%= products[i].id%>`)"  class="btn btn-danger">Delete Item</button>  <!--using relative relationship to delete items i.e parent-->
+                  <button class="btn btn-info text-white" onclick="saveForLater(this,`<%= products[i].id %>`)"> save for later</button>
                 </div>
           </div>
         </div>
         <!-- Modal -->
-        <div class="modal fade" id="<%=i %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="<%=i+'modal' %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel"><%= products[i].productId.name %></h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel"><%= products[i].name %></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <div class="container-fluid">
                   <div class="col-12">
-                    <img src="<%= products[i].productId.image %>" class="card-img-top" alt="...">
+                    <img src="<%= products[i].image %>" class="card-img-top" alt="...">
                   </div>
                   <div class="col-12">
-                    <b><%= products[i].productId.price %></b>
+                    <b><%= products[i].price %></b>
                   </div>
                   <div class="col-12">
-                    <%= products[i].productId.details %>
+                    <%= products[i].details %>
                   </div>
                 </div>
               </div>

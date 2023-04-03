@@ -12,14 +12,14 @@
 
     <title>LELO</title>
   </head>
-  <body class="container-fluid pt-5 mt-4">
+  <body class="container-fluid pt-5 mt-5">
     <%- include('../partials/header'); %>
     <!-- error div -->
-    <div id="errorDiv" class="col-12 bg-danger text-white mt-2 mb-2 d-none " onclick="this.remove()">
+    <div id="errorDiv" class="col-12 bg-danger text-white mt-5 mb-2 d-none " onclick="hideSuccess(this)">
         <p  class="text-center fs-4"></p>
     </div>
     <!-- successDiv -->
-    <div id="successDiv" class="col-12 bg-success text-white mt-2 mb-2 d-none " onclick="this.remove()">
+    <div id="successDiv" class="col-12 bg-success text-white mt-5 mb-2 d-none " onclick="hideSuccess(this)">
         <p  class="text-center fs-4"></p>
     </div>
     <button type="button" class="btn btn-success col-12 mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#newProductModal%>">
@@ -73,7 +73,9 @@
 <!-- Optional JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <script>
+
     sessionStorage.setItem("loadNext","4");
     function loadMoreProd(){
     let loadNext = sessionStorage.getItem("loadNext")
@@ -85,7 +87,7 @@
         data.result.forEach(function(obj){
         displayLoadedProduct(obj)
         })
-        sessionStorage.setItem("loadNext",data.next4Products)
+        sessionStorage.setItem("loadNext",data.nextProductCount)
     })
     }
 
@@ -94,21 +96,21 @@
     let parent = document.getElementById("parent");
     let cont = document.createElement("div");
     cont.classList.add("col-xs-12", "col-md-3", "mb-3",  "mb-sm-0", "mh-25", "shadow")
-    cont.id = obj._id
-    let id = `${obj._id}`
+    cont.id = obj.id
+    let id = `${obj.id}`
     cont.innerHTML = 
     `
         <div class="card">
-            <img src="${obj.image}" data-bs-toggle="modal" data-bs-target= "#${obj._id+"m"}" class="card-img-top" height="250vh">
+            <img src="${obj.image}" data-bs-toggle="modal" data-bs-target= "#${obj.id+"m"}" class="card-img-top" height="250vh">
             <div class="card-body">
-                <h5 id="${obj._id+"n"}" class="card-title">${obj.name} </h5>
+                <h5 id="${obj.id+"n"}" class="card-title">${obj.name} </h5>
             </div>
             <ul class="list-group list-group-flush">
-                <li id="${obj._id+"p"}" class="list-group-item">${obj.price}</li>
-                <li id="${obj._id+"q"}" class="list-group-item">Quantity: <b>${obj.qty}</b></li>
+                <li id="${obj.id+"p"}" class="list-group-item">${obj.price}</li>
+                <li id="${obj.id+"q"}" class="list-group-item">Quantity: <b>${obj.quantity}</b></li>
             </ul>
             <div class="card-footer d-flex justify-content-around">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${obj._id+"m"}">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${obj.id+"m"}">
                 Edit Details
                 </button>
                 <button onclick="deleteProduct(this,'${id}')" type="button" class="btn btn-danger">
@@ -137,26 +139,26 @@
                     </div>
                     <form >
                         <div class="col-12 mb-3">
-                            <label for="${obj._id+"name"}" class="col-form-label"> ${obj.name}</label>
-                            <input placeholder="enter new name" type="text" class="form-control" id="${obj._id+"name"}">
+                            <label for="${obj.id+"name"}" class="col-form-label"> ${obj.name}</label>
+                            <input placeholder="enter new name" type="text" class="form-control" id="${obj.id+"name"}">
                         </div>
                         <div class="col-12 mb-3">
-                            <label for="${obj._id+"price"}" class="col-form-label">${obj.price}</label>
-                            <input placeholder="enter new price" type="number" class="form-control" id="${obj._id+"price"}">
+                            <label for="${obj.id+"price"}" class="col-form-label">${obj.price}</label>
+                            <input placeholder="enter new price" type="number" class="form-control" id="${obj.id+"price"}">
                         </div>
                         <div class="col-12 mb-3">
-                            <label for="${obj._id+"details"}" class="col-form-label"> Details</label>
-                            <textarea rows="5" cols="30" type="text" class="form-control" id="${obj._id+"details"}"> ${obj.details}</textarea>
+                            <label for="${obj.id+"details"}" class="col-form-label"> Details</label>
+                            <textarea rows="5" cols="30" type="text" class="form-control" id="${obj.id+"details"}"> ${obj.details}</textarea>
                         </div>
                         <div class="col-12 mb-3">
-                            <label for="${obj._id+"qty"}" class="col-form-label"> Quantity:${obj.qty}</label>
-                            <input placeholder="Update Quantity" type="number" class="form-control" id="${obj._id+"qty"}">
+                            <label for="${obj.id+"qty"}" class="col-form-label"> Quantity:${obj.quantity}</label>
+                            <input placeholder="Update Quantity" type="number" class="form-control" id="${obj.id+"qty"}">
                         </div>
                     </form>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" id="${id}" data-bs-dismiss="modal" onclick="update('${obj._id}')">SAVE</button>
+                <button class="btn btn-success" id="${id}" data-bs-dismiss="modal" onclick="update('${obj.id}')">SAVE</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -247,6 +249,16 @@
             successText.classList.remove("d-none")
         })
     }
+
+    function hideSuccess(el){
+        el.classList.add("d-none")
+      }
+
+    window.setTimeout(function() {
+        $('#successDiv').fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 3000);
 </script>
 
 

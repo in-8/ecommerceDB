@@ -1,0 +1,172 @@
+warning: LF will be replaced by CRLF in node_modules/.package-lock.json.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/.eslintrc.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/.github/FUNDING.yml.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/.nycrc.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/CHANGELOG.md.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/LICENSE.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/README.md.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/index.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/package.json.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/get-intrinsic/test/GetIntrinsic.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/.eslintrc.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/.github/FUNDING.yml.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/.nycrc.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/CHANGELOG.md.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/LICENSE.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/example/all.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/example/circular.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/example/fn.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/example/inspect.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/index.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/package-support.json.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/package.json.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/readme.markdown.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test-core-js.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/bigint.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/browser/dom.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/circular.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/deep.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/element.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/err.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/fakes.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/fn.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/has.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/holes.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/indent-option.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/inspect.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/lowbyte.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/number.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/quoteStyle.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/toStringTag.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/undef.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/test/values.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in node_modules/object-inspect/util.inspect.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in package-lock.json.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in package.json.
+The file will have its original line endings in your working directory
+[1mdiff --git a/controllers/cart.js b/controllers/cart.js[m
+[1mindex 0e6bd89..d7b7df9 100644[m
+[1m--- a/controllers/cart.js[m
+[1m+++ b/controllers/cart.js[m
+[36m@@ -41,6 +41,7 @@[m [mconst decreaseQuantityCart = async (req,res)=>{[m
+ const deleteItemCart = async (req,res)=>{[m
+ 	const {id} = req.params;[m
+ 	let user = await getUserViaEmailAndPopulateCart(req.session.userEmail);[m
+[32m+[m	[32mconsole.log(user);[m
+ 	let cart = user.cart;[m
+ 	for(let i in cart.items){[m
+ 		if(cart.items[i].productId.id == id){[m
+[36m@@ -132,7 +133,7 @@[m [mconst getCheckout = async (req,res)=>{[m
+ 	result =[];[m
+ 	for(let i in user.cart.items){[m
+ 		let product = await getProductById(user.cart.items[i].productId.id);[m
+[31m-		if([product]==null){[m
+[32m+[m		[32mif(product==null){[m
+ 			res.render('/pages/cart',{error:"product no longer available! delete item"})[m
+ 			return;[m
+ 		}else if(product.qty<user.cart.items[i].qty){[m
+[1mdiff --git a/controllers/loginUser.js b/controllers/loginUser.js[m
+[1mindex 7049a87..b31cc3a 100644[m
+[1m--- a/controllers/loginUser.js[m
+[1m+++ b/controllers/loginUser.js[m
+[36m@@ -1,9 +1,10 @@[m
+ const{UserDB} = require("../database/schema");[m
+ const sendResetMail = require("../methods/sendResetMail");[m
+[31m-const {getUserViaEmail,getUserViaEmailPassword,getUserViaEmailToken} = require("../services/getUser")[m
+[31m-const{updateUserVerify,updateUserPassword} = require("../services/updateUser")[m
+[31m-[m
+[31m-[m
+[32m+[m[32m// const {getUserViaEmail,getUserViaEmailPassword,getUserViaEmailToken} = require("../services/getUser")[m
+[32m+[m[32m// const{updateUserVerify,updateUserPassword} = require("../services/updateUser")[m
+[32m+[m[32m//sqlservices[m
+[32m+[m[32mconst {updateUserVerify,updateUserPassword} = require('../services/sqlServices/user/updateUser');[m
+[32m+[m[32mconst {getUserViaEmail,getUserViaUserID} = require('../services/sqlServices/user/getUser');[m
+ const loginUserGet= (req, res) => {[m
+ 	res.render("pages/login",{error:""});[m
+ }[m
+[36m@@ -12,37 +13,37 @@[m [mconst loginUserGet= (req, res) => {[m
+ const loginUserPost = async (req,res)=>{[m
+ 	let email = req.body.email[m
+ 	let password = req.body.password[m
+[31m-	const user = await getUserViaEmailPassword(email,password)[m
+[31m-			if(user){[m
+[31m-				req.session.is_logged_in=true;[m
+[31m-				req.session.isVerified=user.isVerified[m
+[31m-				req.session.firstName = user.firstName;[m
+[31m-				req.session.userEmail = user.email;[m
+[31m-				req.session.isAdmin = user.isAdmin;[m
+[31m-				res.redirect('/');[m
+[31m-			}else{[m
+[31m-				res.render("pages/login",{error:"please check your email or password entered correctly"});[m
+[31m-			}[m
+[31m-	}[m
+[31m-[m
+[32m+[m	[32mconst user = await getUserViaEmail(email)[m
+[32m+[m	[32mif(user.recordset.length ==0){[m
+[32m+[m		[32mres.render("pages/login",{error:"user doesnt exist please signup"});[m
+[32m+[m	[32m}else{[m
+[32m+[m		[32mif(user.recordset[0].password == password){[m
+[32m+[m			[32mreq.session.is_logged_in=true;[m
+[32m+[m			[32mreq.session.isVerified=user.recordset[0].isVerified[m
+[32m+[m			[32mreq.session.firstName = user.recordset[0].Fname;[m
+[32m+[m			[32mreq.session.userEmail = email;[m
+[32m+[m			[32mreq.session.isAdmin = user.recordset[0].role == "ADMIN";[m
+[32m+[m			[32mreq.session.UserID = user.recordset[0].UserID;[m
+[32m+[m			[32mres.redirect('/');[m
+[32m+[m		[32m}else{[m
+[32m+[m			[32mres.render("pages/login",{error:"please check your email or password entered correctly"});[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}}[m
+[32m+[m[32m//use user id dont expose email[m
+ const verifyUser = async function(req,res){	[m
+ 	const userEmail = req.params.email;[m
+ 	const userToken = req.params.token;[m
+[31m-	const user = await getUserViaEmailToken(userEmail,userToken)[m
+[32m+[m	[32mconst user = await getUserViaEmail(userEmail)[m
+[32m+[m	[32mconsole.log(user.recordset[0]);[m
+ 	if(user){[m
+ 		await updateUserVerify(userEmail,userToken

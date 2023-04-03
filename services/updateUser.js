@@ -14,13 +14,13 @@ const findViaEmailAndUpdateCart = async function(userEmail,userCart){
 
 const updateProductFromCart = async function(product){
    await UserDB.updateMany({},{
-       cart:{
-           $pull:{													//deletes item from array
-               items:{
-               productId:product._id
-               }
-           }
-       }
+      cart:{
+         $pull:{													//deletes item from array
+            items:{
+            productId:product._id
+            }
+         }
+      }
    })
 }
 

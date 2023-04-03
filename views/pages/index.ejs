@@ -12,17 +12,22 @@
 
     <title>LELO</title>
   </head>
-  <body class="container-fluid pt-5 mt-4">
+  <body class="container-fluid pt-5 mt-4" style="background-color: #B0DAFF;">
     <%- include('../partials/header'); %>
+    <!-- successDiv -->
+    <div id="successDiv" class="col-12 bg-success text-white mt-4 mb-2 d-none " onclick="hideSuccess(this)">
+      <p  class="text-center fs-4"></p>
+    </div>
     <%- include('../partials/errorDiv'); %>
     <%- include('../partials/products'); %>
-    <a class="btn btn-outline-secondary col-12 mt-4" id="loadMore" onclick="loadMoreProd()" role="button">LOAD MORE +</a>
+    <a class="btn btn-light col-12 mt-4" id="loadMore" onclick="loadMoreProd()" role="button">LOAD MORE +</a>
   </body>
 </html>
 
 <!-- Optional JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <script>
       function addToCart(el,id){
         fetch(`/addToCart?id=${id}`,{method:'POST',headers: {"type": "fetch"}})   //can use loop till class to remoce dependencey and deletehttps://stackoverflow.com/questions/47072364/how-to-get-nth-parent-element-in-pure-javascript-and-not-jquery
@@ -40,14 +45,21 @@
         }
         }
         ).then(data=>{
-          let qtyBadge = document.getElementById("qtyBadge");
-          qtyBadge.innerHTML = data.quantity
+          if(data.msg){
+            let successText = document.getElementById("successDiv");
+            successText.firstElementChild.innerHTML = data.msg;
+            successText.classList.remove("d-none")
+          }else{
+            let qtyBadge = document.getElementById("qtyBadge");
+            qtyBadge.innerHTML = data.quantity
+          }
+
         })
         // .then(()=>{
         //   el.innerHTML = "Added item to cart "}
         // )
       }
-      
+      //update if want to load more product
       sessionStorage.setItem("loadNext","4");
       function loadMoreProd(){
         let loadNext = sessionStorage.getItem("loadNext")
@@ -62,34 +74,58 @@
           sessionStorage.setItem("loadNext",data.nextProductCount)
         })
       }
+
       function displayLoadedProduct(obj){
         let parent = document.getElementById("parent");
         let cont = document.createElement("div");
         cont.classList.add("col-xs-12", "col-md-3", "mb-3",  "mb-sm-0", "mh-25", "shadow")
-        cont.innerHTML = 
-        `
-          <div class="card">
-                <img src="${obj.image}" data-bs-toggle="modal" data-bs-target="#${obj._id}" class="card-img-top" height="250vh">
-                <div class="card-body">
-                  <h5 class="card-title">${obj.name} </h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">${obj.price}</li>
-                </ul>
-                <div class="card-body d-flex justify-content-around">
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${obj._id}">
-                    View Details
-                  </button>
-                  <button onclick="addToCart(this,'${obj._id}')"  class="btn btn-success">Add to cart</button>
-                </div>
-          </div>
-        `
+        if(obj.isavailable){
+          cont.innerHTML = 
+          `
+            <div class="card">
+                  <img src="${obj.image}" data-bs-toggle="modal" data-bs-target="#${obj.id}" class="card-img-top" height="250vh">
+                  <div class="card-body">
+                    <h5 class="card-title">${obj.name} </h5>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">${obj.price}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-around">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${obj.id}">
+                      View Details
+                    </button>
+                    <button onclick="addToCart(this,'${obj.id}')"  class="btn btn-success">Add to cart</button>
+                  </div>
+            </div>
+          `
+
+        }else{
+          cont.innerHTML = 
+          `
+            <div class="card">
+                  <img src="${obj.image}" data-bs-toggle="modal" data-bs-target="#${obj.id}" class="card-img-top" height="250vh">
+                  <div class="card-body">
+                    <h5 class="card-title">${obj.name} </h5>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">${obj.price}</li>
+                  </ul>
+                  <div class="card-body d-flex justify-content-around bg-danger">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${obj.id}">
+                      View Details
+                    </button>
+                    <button "  class="btn btn-warning">out of stock</button>
+                  </div>
+            </div>
+          `
+        }
         let modelCont = document.createElement("div");
         modelCont.classList.add("modal","fade");
-        modelCont.id = `${obj._id}`
+        modelCont.id = `${obj.id}`
         modelCont.tabIndex = -1
         modelCont.innerHTML = 
         `
+
         <!-- Modal -->
           <div class="modal-dialog">
             <div class="modal-content">
@@ -119,6 +155,22 @@
         parent.appendChild(cont);
         parent.appendChild(modelCont);
       }
+
+      function hideSuccess(el){
+        el.classList.add("d-none")
+      }
+      window.setTimeout(function() {
+          $('#successDiv').fadeTo(500, 0).slideUp(500, function(){
+              $(this).remove(); 
+          });
+          $('#err').fadeTo(500, 0).slideUp(500, function(){
+              $(this).remove(); 
+          });
+          $('#successText').fadeTo(500, 0).slideUp(500, function(){
+              $(this).remove(); 
+          });
+      }, 3000);
+        
     </script>
 
 
